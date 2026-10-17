@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式專注番茄鐘</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f3f4f6;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 300px;
+        }
+        h1 {
+            color: #374151;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .timer {
+            font-size: 64px;
+            font-weight: bold;
+            color: #ef4444;
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+        }
+        .controls button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: background-color 0.2s;
+        }
+        .controls button:hover {
+            background-color: #2563eb;
+        }
+        .controls button.reset {
+            background-color: #6b7280;
+        }
+        .controls button.reset:hover {
+            background-color: #4b5563;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>專注番茄鐘</h1>
+        <div class="timer" id="display">25:00</div>
+        <div class="controls">
+            <button id="startBtn" onclick="toggleTimer()">開始</button>
+            <button class="reset" onclick="resetTimer()">重設</button>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 25 * 60; // 25分鐘轉換為秒
+        let timerId = null;
+        let isRunning = false;
+
+        const display = document.getElementById('display');
+        const startBtn = document.getElementById('startBtn');
+
+        // 更新畫面上的時間顯示
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            // padStart(2, '0') 用於確保數字永遠是兩位數，例如 9 秒會顯示成 09
+            display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // 控制開始與暫停
+        function toggleTimer() {
+            if (isRunning) {
+                // 暫停計時
+                clearInterval(timerId);
+                startBtn.textContent = '開始';
+                startBtn.style.backgroundColor = '#3b82f6';
+            } else {
+                // 開始計時：使用 setInterval 每 1000 毫秒 (1秒) 執行一次扣秒
+                timerId = setInterval(() => {
+                    timeLeft--;
+                    updateDisplay();
+                    if (timeLeft === 0) {
+                        clearInterval(timerId);
+                        alert('時間到！休息一下吧！');
+                        resetTimer();
+                    }
+                }, 1000);
+                startBtn.textContent = '暫停';
+                startBtn.style.backgroundColor = '#f59e0b'; // 變更按鈕顏色以提示狀態
+            }
+            isRunning = !isRunning;
+        }
+
+        // 重設時間
+        function resetTimer() {
+            clearInterval(timerId);
+            isRunning = false;
+            timeLeft = 25 * 60;
+            startBtn.textContent = '開始';
+            startBtn.style.backgroundColor = '#3b82f6';
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>
